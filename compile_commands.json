@@ -1,0 +1,50 @@
+[
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-std=c23",
+      "-g",
+      "-o",
+      "test_lexer",
+      "tests/test_lexer.c"
+    ],
+    "directory": "/home/craftrock/Projects/monkey",
+    "file": "/home/craftrock/Projects/monkey/tests/test_lexer.c",
+    "output": "/home/craftrock/Projects/monkey/test_lexer"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-std=c23",
+      "-g",
+      "-o",
+      "test_lexer",
+      "src/lexer.c"
+    ],
+    "directory": "/home/craftrock/Projects/monkey",
+    "file": "/home/craftrock/Projects/monkey/src/lexer.c",
+    "output": "/home/craftrock/Projects/monkey/test_lexer"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-std=c23",
+      "-g",
+      "-o",
+      "test_lexer",
+      "src/token.c"
+    ],
+    "directory": "/home/craftrock/Projects/monkey",
+    "file": "/home/craftrock/Projects/monkey/src/token.c",
+    "output": "/home/craftrock/Projects/monkey/test_lexer"
+  }
+]
