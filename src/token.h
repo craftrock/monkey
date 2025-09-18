@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stddef.h>
+
 typedef enum {
 	TOKEN_ILLEGAL,
 	TOKEN_EOF,
@@ -26,5 +27,4 @@ typedef struct {
 
 const char *token_type_string(TokenType type);
 Token token_new(TokenType type, const char *literal, size_t length);
-Token token_create(TokenType type, const char *literal);
-void token_free(Token *token);
+TokenType lookup_identifier_token_type(const char *identifier);

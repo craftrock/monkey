@@ -1,17 +1,32 @@
 #include "../src/lexer.h"
 #include "../src/token.h"
 #include <check.h>
+#include <stdio.h>
 
 START_TEST(test_next_token) {
-	const char *input = "=+(){},;";
-
+	const char *input = "let five = 5;"
+	                    "let ten = 10;"
+	                    "let add = fn(x, y) {"
+	                    "  x + y;"
+	                    "};"
+	                    "let result = add(five, ten);";
 	struct {
 		TokenType expected_type;
 		const char *expected_literal;
 	} tests[] = {
-	    {TOKEN_ASSIGN, "="}, {TOKEN_PLUS, "+"},      {TOKEN_LPAREN, "("},
-	    {TOKEN_RPAREN, ")"}, {TOKEN_LBRACE, "{"},    {TOKEN_RBRACE, "}"},
-	    {TOKEN_COMMA, ","},  {TOKEN_SEMICOLON, ";"}, {TOKEN_EOF, ""},
+	    {TOKEN_LET, "let"},      {TOKEN_IDENT, "five"},  {TOKEN_ASSIGN, "="},
+	    {TOKEN_INT, "5"},        {TOKEN_SEMICOLON, ";"}, {TOKEN_LET, "let"},
+	    {TOKEN_IDENT, "ten"},    {TOKEN_ASSIGN, "="},    {TOKEN_INT, "10"},
+	    {TOKEN_SEMICOLON, ";"},  {TOKEN_LET, "let"},     {TOKEN_IDENT, "add"},
+	    {TOKEN_ASSIGN, "="},     {TOKEN_FUNCTION, "fn"}, {TOKEN_LPAREN, "("},
+	    {TOKEN_IDENT, "x"},      {TOKEN_COMMA, ","},     {TOKEN_IDENT, "y"},
+	    {TOKEN_RPAREN, ")"},     {TOKEN_LBRACE, "{"},    {TOKEN_IDENT, "x"},
+	    {TOKEN_PLUS, "+"},       {TOKEN_IDENT, "y"},     {TOKEN_SEMICOLON, ";"},
+	    {TOKEN_RBRACE, "}"},     {TOKEN_SEMICOLON, ";"}, {TOKEN_LET, "let"},
+	    {TOKEN_IDENT, "result"}, {TOKEN_ASSIGN, "="},    {TOKEN_IDENT, "add"},
+	    {TOKEN_LPAREN, "("},     {TOKEN_IDENT, "five"},  {TOKEN_COMMA, ","},
+	    {TOKEN_IDENT, "ten"},    {TOKEN_RPAREN, ")"},    {TOKEN_SEMICOLON, ";"},
+	    {TOKEN_EOF, ""},
 	};
 
 	Lexer *lexer = lexer_new(input);
@@ -19,8 +34,9 @@ START_TEST(test_next_token) {
 
 	for (size_t i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
 		Token tok = lexer_next_token(lexer);
-		ck_assert_int_eq(tok.type, tests[i].expected_type);
+		printf("'%.*s'\n", (int)tok.length, tok.literal);
 		ck_assert_str_eq(tok.literal, tests[i].expected_literal);
+		ck_assert_int_eq(tok.type, tests[i].expected_type);
 	}
 
 	lexer_free(lexer);
@@ -69,6 +85,10 @@ Suite *lexer_suite(void) {
 int main(void) {
 	Suite *s = lexer_suite();
 	SRunner *sr = srunner_create(s);
+	
+	// Disable forking for debugging
+	srunner_set_fork_status(sr, CK_NOFORK);
+	
 	srunner_run_all(sr, CK_NORMAL);
 	int number_failed = srunner_ntests_failed(sr);
 	srunner_free(sr);
