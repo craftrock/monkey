@@ -21,10 +21,11 @@ typedef enum {
 
 typedef struct {
 	TokenType type;
-	const char *literal;
+	const char *const literal;
 	size_t length;
 } Token;
 
 const char *token_type_string(TokenType type);
 Token token_new(TokenType type, const char *literal, size_t length);
-TokenType lookup_identifier_token_type(const char *identifier);
+TokenType lookup_identifier_token_type(const char *identifier,
+                                       const size_t length);

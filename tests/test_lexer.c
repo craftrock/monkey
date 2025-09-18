@@ -2,6 +2,9 @@
 #include "../src/token.h"
 #include <check.h>
 #include <stdio.h>
+#include <string.h>
+
+void ck_token_literal_eq(const Token token, const char *expected_literal);
 
 START_TEST(test_next_token) {
 	const char *input = "let five = 5;"
@@ -10,7 +13,7 @@ START_TEST(test_next_token) {
 	                    "  x + y;"
 	                    "};"
 	                    "let result = add(five, ten);";
-	struct {
+	const struct {
 		TokenType expected_type;
 		const char *expected_literal;
 	} tests[] = {
@@ -33,10 +36,10 @@ START_TEST(test_next_token) {
 	ck_assert_ptr_nonnull(lexer);
 
 	for (size_t i = 0; i < sizeof(tests) / sizeof(tests[0]); i++) {
-		Token tok = lexer_next_token(lexer);
-		printf("'%.*s'\n", (int)tok.length, tok.literal);
-		ck_assert_str_eq(tok.literal, tests[i].expected_literal);
-		ck_assert_int_eq(tok.type, tests[i].expected_type);
+		printf("[test_next_token] iteration %d\n", (int)i + 1);
+		const Token token = lexer_next_token(lexer);
+		ck_token_literal_eq(token, tests[i].expected_literal);
+		ck_assert_int_eq(token.type, tests[i].expected_type);
 	}
 
 	lexer_free(lexer);
@@ -62,7 +65,7 @@ START_TEST(test_empty_input) {
 	Lexer *lexer = lexer_new("");
 	ck_assert_ptr_nonnull(lexer);
 
-	Token tok = lexer_next_token(lexer);
+	const Token tok = lexer_next_token(lexer);
 	ck_assert_int_eq(tok.type, TOKEN_EOF);
 	ck_assert_str_eq(tok.literal, "");
 
@@ -85,12 +88,19 @@ Suite *lexer_suite(void) {
 int main(void) {
 	Suite *s = lexer_suite();
 	SRunner *sr = srunner_create(s);
-	
+
 	// Disable forking for debugging
 	srunner_set_fork_status(sr, CK_NOFORK);
-	
+
 	srunner_run_all(sr, CK_NORMAL);
-	int number_failed = srunner_ntests_failed(sr);
+	const int number_failed = srunner_ntests_failed(sr);
 	srunner_free(sr);
 	return (number_failed == 0) ? 0 : 1;
+}
+
+void ck_token_literal_eq(const Token token, const char *expected_literal) {
+	char literal_copy[token.length + 1];
+	strncpy(literal_copy, token.literal, token.length);
+	literal_copy[token.length] = '\0';
+	ck_assert_str_eq(literal_copy, expected_literal);
 }

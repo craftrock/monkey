@@ -9,7 +9,7 @@ bool is_letter(char ch);
 const char *lexer_read_identifier(Lexer *lexer, size_t *out_length);
 void lexer_skip_whitespace(Lexer *lexer);
 
-Lexer *lexer_new(const char *input) {
+Lexer *lexer_new(const char *const input) {
 	const size_t len = strlen(input);
 	Lexer *lexer = malloc(sizeof(Lexer));
 	*lexer = (Lexer){.input = input,
@@ -22,55 +22,56 @@ Lexer *lexer_new(const char *input) {
 }
 
 Token lexer_next_token(Lexer *lexer) {
-	Token tok;
-
 	lexer_skip_whitespace(lexer);
 
+	TokenType ttype;
 	switch (lexer->ch) {
 	case '=':
-		tok = token_new(TOKEN_ASSIGN, &lexer->ch, 1);
+		ttype = TOKEN_ASSIGN;
 		break;
 	case ';':
-		tok = token_new(TOKEN_SEMICOLON, &lexer->ch, 1);
+		ttype = TOKEN_SEMICOLON;
 		break;
 	case '(':
-		tok = token_new(TOKEN_LPAREN, &lexer->ch, 1);
+		ttype = TOKEN_LPAREN;
 		break;
 	case ')':
-		tok = token_new(TOKEN_RPAREN, &lexer->ch, 1);
+		ttype = TOKEN_RPAREN;
 		break;
 	case ',':
-		tok = token_new(TOKEN_COMMA, &lexer->ch, 1);
+		ttype = TOKEN_COMMA;
 		break;
 	case '+':
-		tok = token_new(TOKEN_PLUS, &lexer->ch, 1);
+		ttype = TOKEN_PLUS;
 		break;
 	case '{':
-		tok = token_new(TOKEN_LBRACE, &lexer->ch, 1);
+		ttype = TOKEN_LBRACE;
 		break;
 	case '}':
-		tok = token_new(TOKEN_RBRACE, &lexer->ch, 1);
+		ttype = TOKEN_RBRACE;
 		break;
 	case 0:
-		tok = token_new(TOKEN_EOF, "", 0);
+		ttype = TOKEN_EOF;
 		break;
 	default:
 		if (is_letter(lexer->ch)) {
-			tok.literal = lexer_read_identifier(lexer, &tok.length);
-			tok.type = lookup_identifier_token_type(tok.literal);
-			return tok;
-		} else {
-			tok = token_new(TOKEN_ILLEGAL, &lexer->ch, 1);
+			size_t length;
+			const char *literal = lexer_read_identifier(lexer, &length);
+			ttype = lookup_identifier_token_type(literal, length);
+			return token_new(ttype, literal, length);
 		}
+
+		ttype = TOKEN_ILLEGAL;
 	};
 
+	const Token token = token_new(ttype, &lexer->input[lexer->position], 1);
 	lexer_read_char(lexer);
-	return tok;
+	return token;
 }
 
-void lexer_free(Lexer *p) {
-	if (p) {
-		free(p);
+void lexer_free(Lexer *lexer) {
+	if (lexer) {
+		free(lexer);
 	}
 }
 
@@ -86,11 +87,11 @@ void lexer_read_char(Lexer *lexer) {
 }
 
 const char *lexer_read_identifier(Lexer *lexer, size_t *out_length) {
-	size_t position = lexer->position;
+	const size_t position = lexer->position;
 	while (is_letter(lexer->ch)) {
 		lexer_read_char(lexer);
 	}
-	*out_length = lexer->position - position + 1;
+	*out_length = lexer->position - position;
 	return &lexer->input[position];
 }
 
@@ -101,6 +102,6 @@ void lexer_skip_whitespace(Lexer *lexer) {
 	}
 }
 
-bool is_letter(char ch) {
-	return ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch == ' ';
+bool is_letter(const char ch) {
+	return ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch == '_';
 }
