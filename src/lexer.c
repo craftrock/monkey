@@ -5,8 +5,11 @@
 #include <string.h>
 
 void lexer_read_char(Lexer *lexer);
+char lexer_peek_char(const Lexer *lexer);
 bool is_letter(char ch);
+bool is_digit(char ch);
 const char *lexer_read_identifier(Lexer *lexer, size_t *out_length);
+const char *lexer_read_number(Lexer *lexer, size_t *out_length);
 void lexer_skip_whitespace(Lexer *lexer);
 
 Lexer *lexer_new(const char *const input) {
@@ -27,6 +30,13 @@ Token lexer_next_token(Lexer *lexer) {
 	TokenType ttype;
 	switch (lexer->ch) {
 	case '=':
+		if (lexer_peek_char(lexer) == '=') {
+			ttype = TOKEN_EQ;
+			const Token token = token_new(ttype, &lexer->input[lexer->position], 2);
+			lexer_read_char(lexer);
+			lexer_read_char(lexer);
+			return token;
+		}
 		ttype = TOKEN_ASSIGN;
 		break;
 	case ';':
@@ -44,6 +54,31 @@ Token lexer_next_token(Lexer *lexer) {
 	case '+':
 		ttype = TOKEN_PLUS;
 		break;
+	case '-':
+		ttype = TOKEN_MINUS;
+		break;
+	case '!':
+		if (lexer_peek_char(lexer) == '=') {
+			ttype = TOKEN_NOT_EQ;
+			const Token token = token_new(ttype, &lexer->input[lexer->position], 2);
+			lexer_read_char(lexer);
+			lexer_read_char(lexer);
+			return token;
+		}
+		ttype = TOKEN_BANG;
+		break;
+	case '/':
+		ttype = TOKEN_SLASH;
+		break;
+	case '*':
+		ttype = TOKEN_ASTERISK;
+		break;
+	case '<':
+		ttype = TOKEN_LT;
+		break;
+	case '>':
+		ttype = TOKEN_GT;
+		break;
 	case '{':
 		ttype = TOKEN_LBRACE;
 		break;
@@ -54,11 +89,15 @@ Token lexer_next_token(Lexer *lexer) {
 		ttype = TOKEN_EOF;
 		break;
 	default:
+		size_t length;
 		if (is_letter(lexer->ch)) {
-			size_t length;
-			const char *literal = lexer_read_identifier(lexer, &length);
-			ttype = lookup_identifier_token_type(literal, length);
-			return token_new(ttype, literal, length);
+			const char *identifier = lexer_read_identifier(lexer, &length);
+			ttype = lookup_identifier_token_type(identifier, length);
+			return token_new(ttype, identifier, length);
+		} else if (is_digit(lexer->ch)) {
+			const char *number = lexer_read_number(lexer, &length);
+			ttype = TOKEN_INT;
+			return token_new(ttype, number, length);
 		}
 
 		ttype = TOKEN_ILLEGAL;
@@ -86,9 +125,26 @@ void lexer_read_char(Lexer *lexer) {
 	lexer->read_position++;
 }
 
+char lexer_peek_char(const Lexer *lexer) {
+	if (lexer->read_position >= lexer->input_length) {
+		return 0;
+	}
+
+	return lexer->input[lexer->read_position];
+}
+
 const char *lexer_read_identifier(Lexer *lexer, size_t *out_length) {
 	const size_t position = lexer->position;
 	while (is_letter(lexer->ch)) {
+		lexer_read_char(lexer);
+	}
+	*out_length = lexer->position - position;
+	return &lexer->input[position];
+}
+
+const char *lexer_read_number(Lexer *lexer, size_t *out_length) {
+	const size_t position = lexer->position;
+	while (is_digit(lexer->ch)) {
 		lexer_read_char(lexer);
 	}
 	*out_length = lexer->position - position;
@@ -105,3 +161,5 @@ void lexer_skip_whitespace(Lexer *lexer) {
 bool is_letter(const char ch) {
 	return ('a' <= ch && ch <= 'z') || ('A' <= ch && ch <= 'Z') || ch == '_';
 }
+
+bool is_digit(const char ch) { return '0' <= ch && ch <= '9'; }

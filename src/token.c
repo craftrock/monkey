@@ -17,9 +17,9 @@ typedef struct {
 } KeywordEntry;
 
 static const KeywordEntry keywords[] = {
-    {"fn", TOKEN_FUNCTION},
-    {"let", TOKEN_LET},
-    {nullptr, TOKEN_IDENT}, // sentinel value
+    {"fn", TOKEN_FUNCTION},   {"let", TOKEN_LET},     {"true", TOKEN_TRUE},
+    {"false", TOKEN_FALSE},   {"if", TOKEN_IF},       {"else", TOKEN_ELSE},
+    {"return", TOKEN_RETURN}, {nullptr, TOKEN_IDENT}, // sentinel value
 };
 
 TokenType lookup_identifier_token_type(const char *identifier,
