@@ -11,7 +11,8 @@ rt_dep = meson.get_compiler('c').find_library('rt')
 # Source files
 lexer_sources = files(
   'src/lexer.c',
-  'src/token.c'
+  'src/token.c',
+  'src/repl.c'
 )
 
 # Test executable - matching your Makefile exactly

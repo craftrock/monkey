@@ -32,7 +32,8 @@ Token lexer_next_token(Lexer *lexer) {
 	case '=':
 		if (lexer_peek_char(lexer) == '=') {
 			ttype = TOKEN_EQ;
-			const Token token = token_new(ttype, &lexer->input[lexer->position], 2);
+			const Token token =
+			    token_new(ttype, &lexer->input[lexer->position], 2);
 			lexer_read_char(lexer);
 			lexer_read_char(lexer);
 			return token;
@@ -60,7 +61,8 @@ Token lexer_next_token(Lexer *lexer) {
 	case '!':
 		if (lexer_peek_char(lexer) == '=') {
 			ttype = TOKEN_NOT_EQ;
-			const Token token = token_new(ttype, &lexer->input[lexer->position], 2);
+			const Token token =
+			    token_new(ttype, &lexer->input[lexer->position], 2);
 			lexer_read_char(lexer);
 			lexer_read_char(lexer);
 			return token;
