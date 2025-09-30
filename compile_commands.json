@@ -5,15 +5,18 @@
       "-c",
       "-Wall",
       "-Wextra",
+      "-Wno-microsoft-anon-tag",
       "-std=c23",
+      "-fms-extensions",
+      "-D_GNU_SOURCE",
       "-g",
       "-o",
-      "test_lexer",
-      "tests/test_lexer.c"
+      "build/monkey",
+      "src/main.c"
     ],
     "directory": "/home/craftrock/Projects/monkey",
-    "file": "/home/craftrock/Projects/monkey/tests/test_lexer.c",
-    "output": "/home/craftrock/Projects/monkey/test_lexer"
+    "file": "/home/craftrock/Projects/monkey/src/main.c",
+    "output": "/home/craftrock/Projects/monkey/build/monkey"
   },
   {
     "arguments": [
@@ -21,15 +24,18 @@
       "-c",
       "-Wall",
       "-Wextra",
+      "-Wno-microsoft-anon-tag",
       "-std=c23",
+      "-fms-extensions",
+      "-D_GNU_SOURCE",
       "-g",
       "-o",
-      "test_lexer",
+      "build/monkey",
       "src/lexer.c"
     ],
     "directory": "/home/craftrock/Projects/monkey",
     "file": "/home/craftrock/Projects/monkey/src/lexer.c",
-    "output": "/home/craftrock/Projects/monkey/test_lexer"
+    "output": "/home/craftrock/Projects/monkey/build/monkey"
   },
   {
     "arguments": [
@@ -37,14 +43,36 @@
       "-c",
       "-Wall",
       "-Wextra",
+      "-Wno-microsoft-anon-tag",
       "-std=c23",
+      "-fms-extensions",
+      "-D_GNU_SOURCE",
       "-g",
       "-o",
-      "test_lexer",
+      "build/monkey",
       "src/token.c"
     ],
     "directory": "/home/craftrock/Projects/monkey",
     "file": "/home/craftrock/Projects/monkey/src/token.c",
-    "output": "/home/craftrock/Projects/monkey/test_lexer"
+    "output": "/home/craftrock/Projects/monkey/build/monkey"
+  },
+  {
+    "arguments": [
+      "/usr/bin/gcc",
+      "-c",
+      "-Wall",
+      "-Wextra",
+      "-Wno-microsoft-anon-tag",
+      "-std=c23",
+      "-fms-extensions",
+      "-D_GNU_SOURCE",
+      "-g",
+      "-o",
+      "build/monkey",
+      "src/repl.c"
+    ],
+    "directory": "/home/craftrock/Projects/monkey",
+    "file": "/home/craftrock/Projects/monkey/src/repl.c",
+    "output": "/home/craftrock/Projects/monkey/build/monkey"
   }
 ]
